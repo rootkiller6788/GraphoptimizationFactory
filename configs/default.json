@@ -1,0 +1,192 @@
+{
+  "acceptance": {
+    "max_answer_infeasible_rate": 0.0,
+    "max_greedy_hv_gap_vs_oracle": 0.15,
+    "max_structural_failures": 0,
+    "min_acceptance_checks": 19,
+    "min_adversarial_cases": 44,
+    "min_bit_identical_rewrites": 5,
+    "min_distinct_plans": 40,
+    "min_frontier_points": 2,
+    "min_inexact_rewrites": 3,
+    "min_ladder_feasible_steps": 2,
+    "min_ladder_rungs": 10,
+    "min_lineage_nodes": 20,
+    "min_monotone_strategies": 2,
+    "min_order_sensitive_pairs": 1,
+    "min_searcher_hv_gain_over_random_at_tight_budget": 0.05,
+    "oracle_is_optimal": true,
+    "safe_window_nonempty": true
+  },
+  "adversarial": {
+    "bias_epsilons": [
+      1e-12,
+      1e-09,
+      1e-06,
+      0.001,
+      0.1
+    ]
+  },
+  "budget_sweep": {
+    "budgets": [
+      10,
+      20,
+      30,
+      40,
+      60,
+      80,
+      120
+    ],
+    "strategy": "reject",
+    "tolerance": 0.0
+  },
+  "constraints": {
+    "drift_scale": 1.0,
+    "penalty_weight": 1.0,
+    "strategy": "reject"
+  },
+  "cost": {
+    "bytes_per_elem": 4,
+    "bytes_per_us": 400.0,
+    "flops_per_us": 2000.0,
+    "launch_overhead_us": 3.0
+  },
+  "cost_sweep": {
+    "launch_overhead_us": [
+      0.0,
+      0.3,
+      1.0,
+      3.0,
+      10.0,
+      30.0
+    ]
+  },
+  "expectations": {
+    "analytic_latency_tracks_wallclock": {
+      "claim": "解析延迟与实测求值时间的排序同向（秩相关 ≥ 0.5）",
+      "expect": true
+    },
+    "exact_equality_accepts_all_legal_rewrites": {
+      "claim": "τ=0 时全部合法重写都能通过（即所有合法重写都逐位等价）",
+      "expect": false
+    },
+    "fusion_is_bit_identical": {
+      "claim": "算子融合逐位等价（融合买到的是访存与 launch，不是算法）",
+      "expect": true
+    },
+    "greedy_is_myopic": {
+      "claim": "按单步收益贪心会比穷举最优差",
+      "expect": true
+    },
+    "ladder_has_flat_top": {
+      "claim": "阶梯在高容差端完全平坦（可行域一旦饱和，再放松容差没有收益）",
+      "expect": true
+    },
+    "ladder_improves_quality": {
+      "claim": "放宽容差能改善答案质量（前沿变宽或最优点变高）",
+      "expect": true
+    },
+    "ladder_is_monotone": {
+      "claim": "容差放松 ⇒ 可行域扩张 ⇒ oracle 最优目标不减（数学必然）",
+      "expect": true
+    },
+    "launch_overhead_dominates": {
+      "claim": "融合的收益主要来自 launch 开销（把 launch_overhead_us 扫到 0 后收益大幅缩小）",
+      "expect": true
+    },
+    "objectives_are_independent": {
+      "claim": "三个目标轴互不冗余（两两 |corr| < 0.95）",
+      "expect": true
+    },
+    "order_matters": {
+      "claim": "重写顺序影响结果（存在一对计划，规则相同、顺序不同、结果不同）",
+      "expect": true
+    },
+    "peak_memory_is_an_independent_axis": {
+      "claim": "峰值内存是独立的一维（不被速度轴决定）",
+      "expect": true
+    },
+    "penalty_keeps_answers_feasible": {
+      "claim": "软约束（penalty）交出去的答案仍然可行",
+      "expect": false
+    },
+    "random_saturates_at_main_budget": {
+      "claim": "主预算下随机搜索已拿到 oracle 的全部超体积（⇒ 主预算不是比策略的地方）",
+      "expect": true
+    },
+    "safe_tolerance_window_is_nonempty": {
+      "claim": "存在一个容差区间：全部合法重写通过、全部非法重写被拒",
+      "expect": true
+    },
+    "searchers_beat_random": {
+      "claim": "在**主预算**下，非随机搜索器都优于随机搜索",
+      "expect": true
+    },
+    "searchers_beat_random_at_tight_budget": {
+      "claim": "在**紧预算**下，至少有一个非随机搜索器明显优于随机搜索",
+      "expect": true
+    },
+    "soft_constraint_changes_the_answer": {
+      "claim": "把硬约束换成软约束会改变交出去的答案",
+      "expect": true
+    },
+    "validator_catches_all_illegal": {
+      "claim": "校验器拒掉全部注入的非法重写（含 1e-12 幅度的那一档）",
+      "expect": false
+    }
+  },
+  "graph": {
+    "dim": 8,
+    "n_layers": 3,
+    "rows": 4,
+    "weight_scale": 0.5
+  },
+  "ladder": {
+    "tolerances": [
+      0.0,
+      5e-17,
+      1e-16,
+      2e-16,
+      1e-15,
+      1e-12,
+      1e-09,
+      1e-06,
+      0.001,
+      0.1
+    ]
+  },
+  "probes": {
+    "n_probe": 3,
+    "scale": 0.7
+  },
+  "search": {
+    "beam_width": 4,
+    "budget_per_searcher": 120,
+    "max_depth": 3,
+    "max_moves": 24,
+    "mutation_rate": 0.35,
+    "population": 12,
+    "reference_pad": 0.05,
+    "rule_order": [
+      "dead_node_elimination",
+      "constant_folding",
+      "common_subexpression",
+      "double_transpose",
+      "operator_fusion",
+      "reassociate_add",
+      "matmul_reassociate",
+      "scale_into_weight"
+    ],
+    "searchers": [
+      "random",
+      "greedy",
+      "beam",
+      "evolution"
+    ],
+    "tight_budget": 20
+  },
+  "seed": 20261003,
+  "semantics": {
+    "tolerance": 1e-09
+  }
+}

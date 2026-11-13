@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "graphoptfactory"
+version = "1.0.0"
+description = "GraphOptimizationFactory：重写计划的搜索闭环（硬约束 = 语义等价）"
+requires-python = ">=3.12"
+#: **核心路径零第三方依赖** —— 只用标准库。
+dependencies = []
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+#: 本项目**只做运行时核对**（不建 tests/）：
+#: 关键不变量做成流水线自身的运行时核对 —— 验收表 + 对抗用例 + 期望表。
+#: 这个段保留，是为了哪天要加测试时不用再想 addopts 写什么。
+addopts = "-q"
+testpaths = ["tests"]
