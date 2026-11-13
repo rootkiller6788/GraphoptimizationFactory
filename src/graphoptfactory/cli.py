@@ -50,6 +50,24 @@ def _quiet_prose(enabled: bool) -> Iterator[None]:
         yield
 
 
+def _configure_stdio() -> None:
+    """把 stdout/stderr 切到 UTF-8，避免非 UTF-8 控制台（Windows GBK 等）崩溃。
+
+    报告与产物里含 `µ` / `τ` / 中文；在 GBK 管道下打印 `µ` 会抛
+    `UnicodeEncodeError`，而那是**输出编码**问题，不是数据问题 ——
+    它会让 `check` / `show` 在 CI 或 `| jq` 场景里直接失败。
+    `errors="replace"` 兜住那些连 UTF-8 都表示不了的代理字符。
+    """
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure is None:
+            continue
+        try:
+            reconfigure(encoding="utf-8", errors="replace")
+        except (OSError, ValueError):
+            pass
+
+
 def _emit_json(obj: Any) -> None:
     _JSON_OUT.write(json.dumps(obj, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
     _JSON_OUT.flush()
@@ -351,6 +369,7 @@ _COMMANDS = {"run": cmd_run, "visualize": cmd_visualize, "check": cmd_check,
 
 
 def main(argv: list[str] | None = None) -> int:
+    _configure_stdio()
     parser = _build_parser()
     args = _anchor_args(parser.parse_args(argv))
     return _COMMANDS[args.cmd](args)
