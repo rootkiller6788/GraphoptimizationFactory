@@ -30,6 +30,7 @@ from pathlib import Path
 from typing import Any, Iterator
 
 from . import pipeline
+from . import __version__
 from .config import load_config
 from .emit import emit
 from .report import render_html, render_markdown
@@ -92,6 +93,8 @@ def _build_parser() -> argparse.ArgumentParser:
         description="GraphOptimizationFactory：重写计划的搜索闭环（硬约束 = 语义等价）",
     )
     p.add_argument("--root", default=None, help="项目根（默认 = 本文件所在项目）")
+    p.add_argument("--version", action="version",
+                   version=f"%(prog)s {__version__}")
     sub = p.add_subparsers(dest="cmd", required=True)
 
     def common(sp: argparse.ArgumentParser) -> None:
