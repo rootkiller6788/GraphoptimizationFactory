@@ -3,9 +3,14 @@
 **禁止内置 `hash()`** —— `PYTHONHASHSEED` 会让它跨进程不稳定，直接破坏可复现性。
 所有种子一律走 `derive_seed(*parts)`（sha256 前 8 字节）。
 
-`Rng` 的 `choice` / `shuffle` 先对序列**排序**再抽取：dict / set 的迭代顺序
-会随插入顺序变化，而插入顺序在重写过程中是变的 —— 不排序的话，
+`Rng` **不重排**传入的序列：`choice` / `sample` / `shuffle` 只消费调用方给的顺序。
+确定性因此由调用方负责 —— 传进来的必须是**有序且稳定**的序列
+（`sorted(...)` 或配置里的 `rule_order`），不能是 `set` / `dict` 的迭代结果：
+它们的顺序会随插入顺序与 `PYTHONHASHSEED` 变化，而不重排的话
 「同一份输入跑两次」会给出不同的搜索结果。
+
+（第一版文档写的是「`Rng` 先排序再抽取」，与实现不符 —— `shuffle` 排序就等于
+不做 shuffle。**契约要写在真正执行它的那一层。**）
 """
 
 from __future__ import annotations
