@@ -4,6 +4,7 @@
 """
 from __future__ import annotations
 
+import os
 import re
 import subprocess
 import sys
@@ -45,6 +46,18 @@ def test_version_flag() -> None:
     r = run_cli("--version")
     assert r.returncode == 0, r.stderr
     assert re.search(r"graphoptfactory \d+\.\d+\.\d+", r.stdout), r.stdout
+
+
+def test_module_entrypoint() -> None:
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(ROOT / "src") + os.pathsep + env.get("PYTHONPATH", "")
+    r = subprocess.run(
+        [sys.executable, "-m", "graphoptfactory", "--version"],
+        cwd=ROOT, env=env, capture_output=True, text=True,
+        encoding="utf-8", errors="replace",
+    )
+    assert r.returncode == 0, r.stderr
+    assert "graphoptfactory" in r.stdout
 
 
 def test_every_subcommand_help() -> None:
